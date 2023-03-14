@@ -1,0 +1,17 @@
+html, body {
+    height: 100%;
+}
+
+html {
+    display: table;
+    margin: auto;
+}
+
+body {
+    display: table-cell;
+}
+
+h1.logo {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}

@@ -129,5 +129,5 @@ dmypy.json
 .pyre/
 
 # static files
-static/
+static/files
 .DS_Store

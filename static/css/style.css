@@ -9,9 +9,14 @@ html {
 
 body {
     display: table-cell;
+    padding-top: 10px;
 }
 
 h1.logo {
     padding-top: 10px;
     padding-bottom: 10px;
+}
+
+ul {
+    padding-top: 20px;
 }

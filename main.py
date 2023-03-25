@@ -2,7 +2,7 @@
 #-*- coding: utf-8 -*-
 #Daniel Gonzalez
 # 
-# Home-cloud
+#Home-cloud
 
 from flask import Flask, render_template, send_file
 from flask_wtf import FlaskForm
@@ -11,32 +11,40 @@ from werkzeug.utils import secure_filename
 import os
 from wtforms.validators import InputRequired
 
+#storage location
 destination_path = 'static/files'
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'supersecretkey'
 app.config['UPLOAD_FOLDER'] = destination_path
 
+#uploading button form section
 class UploadFileForm(FlaskForm):
     file = MultipleFileField("File(s) Upload", validators=[InputRequired()])
     submit = SubmitField("Upload File")
 
+#define routes
 @app.route('/', methods=['GET',"POST"], defaults={'req_path': ''})
 @app.route('/<path:req_path>')
 def home(req_path):
+    #if from listed elements the on clicked is a file redirect to download
+    if os.path.isfile(current_path):
+        return send_file(current_path, as_attachment=True)
+
+    #define empty file list that will be shown    
     file_list = []
     
+    #define current path
     current_path = ""
     if destination_path.endswith("/") or req_path.startswith("/"):
         current_path = destination_path + req_path
     else:
         current_path = destination_path + "/" + req_path
-
-    #if path clicked 
-    if os.path.isfile(current_path):
-        return send_file(current_path, as_attachment=True)
     
+    #define form to upload files
     form = UploadFileForm()
+
+    #add a first starting "." that will be used as 'go to previous dir'
     file_list = os.listdir(current_path)
     file_list.insert(0,".")
     print(file_list)
@@ -60,4 +68,3 @@ def home(req_path):
 
 if __name__ == '__main__':
     app.run(debug=True, port=8080, host='0.0.0.0')
-    #app.run()

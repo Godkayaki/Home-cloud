@@ -22,7 +22,8 @@
         {% for file in files %}
         <li>
             <a href="{{ (request.path + '/' if request.path != '/' else '') + file }}">
-                {{ (request.path + '/' if request.path != '/' else '') + file }}
+                <!-- {{ (request.path + '/' if request.path != '/' else '') + file }} -->
+                {{ file }}
             </a>
         </li>
         {% endfor %}

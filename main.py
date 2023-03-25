@@ -24,6 +24,7 @@ class UploadFileForm(FlaskForm):
 @app.route('/', methods=['GET',"POST"], defaults={'req_path': ''})
 @app.route('/<path:req_path>')
 def home(req_path):
+    file_list = []
     
     current_path = ""
     if destination_path.endswith("/") or req_path.startswith("/"):

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Cloud</title>
+    
+</head>
+<body>
+
+    <h1>Home Cloud</h1>
+
+    <h3>Upload Files</h3>
+    <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="req_path" value="{{ current_path }}">
+        <input type="file" name="file" multiple>  <!-- Allow multiple files -->
+        <button type="submit">Upload</button>
+    </form>
+
+    <h3>Current Directory: {{ current_path }}</h3>
+
+    {% if current_path %}
+        <a href="{{ url_for('home', req_path=parent_path) }}">⬆️ Go Back</a>
+    {% endif %}
+
+    <div class="grid-container">
+        {% for file in files %}
+            <div class="grid-item">
+                {% set file_ext = file.split('.')[-1].lower() %}
+                
+                {% if '.' not in file %}
+                    <a href="{{ url_for('home', req_path=current_path + '/' + file) }}">📂 {{ file }}</a>
+                
+                {% elif file_ext in ['png', 'jpg', 'jpeg', 'gif'] %}
+                    <a href="{{ url_for('home', req_path=current_path + '/' + file) }}" download>
+                        <img src="{{ url_for('static', filename='uploads/' + current_path + '/' + file) }}" alt="{{ file }}">
+                    </a>
+                    <span class="file-name">{{ file }}</span>
+                
+                {% elif file_ext == 'pdf' %}
+                    <a href="{{ url_for('home', req_path=current_path + '/' + file) }}" download>📄 {{ file }}</a>
+                {% elif file_ext == 'txt' %}
+                    <a href="{{ url_for('home', req_path=current_path + '/' + file) }}" download>📝 {{ file }}</a>
+                {% else %}
+                    <a href="{{ url_for('home', req_path=current_path + '/' + file) }}" download>📁 {{ file }}</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+</body>
+</html>

@@ -31,7 +31,10 @@
                 {% set file_ext = file.split('.')[-1].lower() %}
                 
                 {% if '.' not in file %}
-                    <a href="{{ url_for('home', req_path=current_path + '/' + file) }}">📂 {{ file }}</a>
+                    <a href="{{ url_for('home', req_path=current_path + '/' + file) }}">
+                        <img src="{{ url_for('static', filename='folder-icon.png') }}" alt="Folder" class="folder-icon">
+                    </a>
+                    <span class="file-name">{{ file }}</span>
                 
                 {% elif file_ext in ['png', 'jpg', 'jpeg', 'gif'] %}
                     <a href="{{ url_for('home', req_path=current_path + '/' + file) }}" download>

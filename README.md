@@ -12,8 +12,8 @@
 A custom-made home cloud storage application build with Python and flask.
 
 ## To-do list
-- [] Add the option to change the root where the cloud is reading.
+- [ ] Add the option to change the root where the cloud is reading.
 - [x] Add the option to bulk download all contents.
-  - [] Make it so the download otion only applies for the files in the current directory.
-- [] Better looking GUI.
-- [] Dockerize application.
+  - [ ] Make it so the download otion only applies for the files in the current directory.
+- [ ] Better looking GUI.
+- [ ] Dockerize application.

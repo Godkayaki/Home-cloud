@@ -12,17 +12,27 @@
 
     <h1>Home Cloud</h1>
 
+    <!-- Storage Path Selection -->
+    <h3>Set storage path</h3>
+    <div>
+        <p class="storage-path">Current Storage Path: <span id="storage-path", style="font-style: italic;">{{ storage_path }}</span></p>
+        <button onclick="document.getElementById('folder-picker').click()">Change Storage Path</button>
+        <input type="file" id="folder-picker" webkitdirectory directory style="display: none;">
+    </div>
+
+    <!-- Upload Files Form -->
     <h3>Upload Files</h3>
-    <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="req_path" value="{{ current_path }}">
-        <input type="file" name="file" multiple>  <!-- Allow multiple files -->
-        <button type="submit">Upload</button>
+    <form method="POST" enctype="multipart/form-data">
+        {{ upload_form.hidden_tag() }}
+        {{ upload_form.file.label }} {{ upload_form.file() }}
+        {{ upload_form.submit() }}
     </form>
 
     <h3>Download all items stored in the Home-Cloud</h3>
 
+    <!-- Download All Button -->
     <form action="{{ url_for('download_all', req_path=current_path) }}" method="get">
-        <button type="submit">Download</button>
+        <button type="submit">Download All</button>
     </form>
 
     <h3>Current Directory: {{ current_path }}</h3>
@@ -58,6 +68,34 @@
             </div>
         {% endfor %}
     </div>
+
+    <script>
+        document.getElementById('folder-picker').addEventListener('change', function(event) {
+            if (event.target.files.length > 0) {
+                let folderPath = event.target.files[0].webkitRelativePath.split("/")[0];  // Get folder name
+                let absolutePath = event.target.files[0].path.replace("\\" + folderPath, "");  // Get absolute path
+                
+                fetch('/set-storage-path', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ new_path: absolutePath })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById("storage-path").textContent = data.new_path;
+                        alert("Storage path updated successfully!");
+                        location.reload();  // Reload to reflect changes
+                    } else {
+                        alert("Error: " + data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        });
+    </script>
 
 </body>
 </html>

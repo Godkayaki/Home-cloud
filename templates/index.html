@@ -19,6 +19,12 @@
         <button type="submit">Upload</button>
     </form>
 
+    <h3>Download all items stored in the Home-Cloud</h3>
+
+    <form action="{{ url_for('download_all', req_path=current_path) }}" method="get">
+        <button type="submit">Download</button>
+    </form>
+
     <h3>Current Directory: {{ current_path }}</h3>
 
     {% if current_path %}

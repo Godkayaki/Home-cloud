@@ -1,6 +1,15 @@
-from flask import Flask, render_template, request, send_file, redirect, url_for
+#!/usr/bin/python3
+#-*- coding: utf-8 -*-
+#Drg - Godkayaki
+#Home-Cloud 
+#app.py
+
 import os
+import shutil
+import tempfile
+import zipfile
 from werkzeug.utils import secure_filename
+from flask import Flask, render_template, request, send_file, redirect, url_for
 
 # Configuration
 UPLOAD_FOLDER = 'static/uploads'  # Base directory for storage
@@ -58,6 +67,26 @@ def upload_file():
             file.save(os.path.join(upload_path, filename))
 
     return redirect(request.referrer)
+
+# Bulk download all files within the current directory
+@app.route('/download-all', methods=['GET'])
+def download_all():
+    req_path = request.args.get('req_path', '')
+    base_path = os.path.abspath(app.config['UPLOAD_FOLDER'])
+    current_path = os.path.abspath(os.path.join(base_path, req_path))
+
+    if not current_path.startswith(base_path):
+        return "Access Denied!", 403
+
+    # Create a temporary ZIP file
+    temp_dir = tempfile.mkdtemp()
+    zip_filename = os.path.join(temp_dir, 'files.zip')
+
+    # Zip the directory
+    shutil.make_archive(zip_filename[:-4], 'zip', current_path)
+
+    # Send the ZIP file
+    return send_file(zip_filename, as_attachment=True)
 
 # Alternative to specifying the favicon
 #@app.route('/favicon.ico')

@@ -26,7 +26,7 @@ A custom-made home cloud storage application build with Python and flask.
 
 ## Run it with docker
 Although not recommendable, since currently the path being read is from where the application is running, it's setted up so you can run it with docker;
-'''
+```
 docker build -t flask-home-cloud . 
 docker run -p 5000:5000 flask-home-cloud
-'''
+```

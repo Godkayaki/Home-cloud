@@ -16,8 +16,7 @@
     <h3>Set storage path</h3>
     <div>
         <p class="storage-path">Current Storage Path: <span id="storage-path", style="font-style: italic;">{{ storage_path }}</span></p>
-        <button onclick="document.getElementById('folder-picker').click()">Change Storage Path</button>
-        <input type="file" id="folder-picker" webkitdirectory directory style="display: none;">
+        <button id="change-path">Change Storage Path</button>
     </div>
 
     <!-- Upload Files Form -->
@@ -54,48 +53,22 @@
                 
                 {% elif file_ext in ['png', 'jpg', 'jpeg', 'gif'] %}
                     <a href="{{ url_for('home', req_path=current_path + '/' + file) }}" download>
-                        <img src="{{ url_for('static', filename='uploads/' + current_path + '/' + file) }}" alt="{{ file }}">
+                        <!-- 
+                        <img src="{{ url_for('static', filename='uploads/' + current_path + '/' + file) }}" alt="{{ file }}"> 
+                         -->
+                        <img src="{{ url_for('static', filename='uploads/' + file) }}" alt="{{ file }}" width="100">
                     </a>
                     <span class="file-name">{{ file }}</span>
                 
-                {% elif file_ext == 'pdf' %}
-                    <a href="{{ url_for('home', req_path=current_path + '/' + file) }}" download>📄 {{ file }}</a>
-                {% elif file_ext == 'txt' %}
-                    <a href="{{ url_for('home', req_path=current_path + '/' + file) }}" download>📝 {{ file }}</a>
                 {% else %}
-                    <a href="{{ url_for('home', req_path=current_path + '/' + file) }}" download>📁 {{ file }}</a>
+                    <a href="{{ url_for('home', req_path=current_path + '/' + file) }}" download>📄 {{ file }}</a>
                 {% endif %}
             </div>
         {% endfor %}
     </div>
 
-    <script>
-        document.getElementById('folder-picker').addEventListener('change', function(event) {
-            if (event.target.files.length > 0) {
-                let folderPath = event.target.files[0].webkitRelativePath.split("/")[0];  // Get folder name
-                let absolutePath = event.target.files[0].path.replace("\\" + folderPath, "");  // Get absolute path
-                
-                fetch('/set-storage-path', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ new_path: absolutePath })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById("storage-path").textContent = data.new_path;
-                        alert("Storage path updated successfully!");
-                        location.reload();  // Reload to reflect changes
-                    } else {
-                        alert("Error: " + data.message);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-            }
-        });
-    </script>
+    <!-- Link to External JS -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 
 </body>
 </html>

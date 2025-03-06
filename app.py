@@ -8,12 +8,16 @@ import json
 import zipfile
 import shutil
 import tempfile
-from flask import Flask, render_template, request, redirect, url_for, send_file
+import os
+import tkinter as tk
+import multiprocessing
+import threading
+from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify
 from flask_wtf import FlaskForm
 from wtforms import MultipleFileField, SubmitField, StringField
 from werkzeug.utils import secure_filename
-import os
 from wtforms.validators import InputRequired
+from tkinter import filedialog
 
 # Configuration
 CONFIG_FILE = "config.json"
@@ -35,6 +39,13 @@ def save_storage_path(path):
 def ensure_directory_exists(path):
     if not os.path.exists(path):
         os.makedirs(path)  # Create folder if missing
+
+# Function to open folder dialog in a process
+def select_folder(result):
+    root = tk.Tk()
+    root.withdraw()  # Hide the main window
+    folder_selected = filedialog.askdirectory()
+    result.put(folder_selected)  # Place the result in the queue
 
 # Initialize storage path
 destination_path = load_storage_path()
@@ -101,17 +112,20 @@ def home(req_path):
     return render_template('index.html', upload_form=upload_form, change_path_form=change_path_form, files=file_list, current_path=req_path, storage_path=destination_path)
 
 # Set storage path
-@app.route('/set-storage-path', methods=['POST'])
-def set_storage_path():
-    data = request.get_json()
-    new_path = data.get("new_path")
+@app.route('/choose-directory', methods=['POST'])
+def choose_directory():
+    result = multiprocessing.Queue()  # Create a queue to pass the result from the process
+    folder_picker_process = multiprocessing.Process(target=select_folder, args=(result,))
+    folder_picker_process.start()  # Start the process
+    folder_picker_process.join()   # Wait for it to finish
     
-    if os.path.exists(new_path) and os.path.isdir(new_path):
-        save_storage_path(new_path)
-        app.config['UPLOAD_FOLDER'] = new_path
-        return jsonify({"success": True, "message": "Storage path updated!", "new_path": new_path})
-    
-    return jsonify({"success": False, "message": "Invalid directory!"})
+    folder_selected = result.get()  # Get the selected path from the queue
+
+    if folder_selected:
+        save_storage_path(folder_selected)  # Save the new path in the config
+        return jsonify({"success": True, "new_path": folder_selected})
+
+    return jsonify({"success": False, "message": "No directory selected"})
 
 # Bulk download all files within the current directory
 @app.route('/download-all', methods=['GET'])

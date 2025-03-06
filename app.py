@@ -4,12 +4,13 @@
 #Home-Cloud 
 #app.py
 
+#pipreqs .\Home-cloud\ --force
+
 import json
 import zipfile
 import shutil
 import tempfile
 import os
-import tkinter as tk
 import multiprocessing
 import threading
 from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify
@@ -17,7 +18,6 @@ from flask_wtf import FlaskForm
 from wtforms import MultipleFileField, SubmitField, StringField
 from werkzeug.utils import secure_filename
 from wtforms.validators import InputRequired
-from tkinter import filedialog
 
 # Configuration
 CONFIG_FILE = "config.json"
@@ -40,13 +40,6 @@ def ensure_directory_exists(path):
     if not os.path.exists(path):
         os.makedirs(path)  # Create folder if missing
 
-# Function to open folder dialog in a process
-def select_folder(result):
-    root = tk.Tk()
-    root.withdraw()  # Hide the main window
-    folder_selected = filedialog.askdirectory()
-    result.put(folder_selected)  # Place the result in the queue
-
 # Initialize storage path
 destination_path = load_storage_path()
 ensure_directory_exists(destination_path)
@@ -54,6 +47,18 @@ ensure_directory_exists(destination_path)
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'supersecretkey'
 app.config['UPLOAD_FOLDER'] = destination_path
+
+# Function to open folder dialog in a process
+@app.route('/set-storage-path', methods=['POST'])
+def set_storage_path():
+    data = request.json
+    new_path = data.get("path")
+
+    if new_path and os.path.exists(new_path):
+        save_storage_path(new_path)
+        return jsonify({"success": True, "new_path": new_path})
+
+    return jsonify({"success": False, "message": "Invalid path"})
 
 # Upload form
 class UploadFileForm(FlaskForm):

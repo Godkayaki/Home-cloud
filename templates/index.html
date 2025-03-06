@@ -13,13 +13,15 @@
     <h1>Home Cloud</h1>
 
     <!-- Storage Path Selection -->
-    <h3>Set storage path</h3>
-    <div>
-        <p class="storage-path">Current Storage Path: <span id="storage-path", style="font-style: italic;">{{ storage_path }}</span></p>
-        <button id="change-path">Change Storage Path</button>
-    </div>
+    <h2>Set storage path</h2>
+    <p>Current Storage Path: <span id="current-path", style="font-style: italic;">{{ storage_path }}</span></p>
+    <form id="manual-path-form">
+        <input type="text" id="manual-path" placeholder="Enter storage path">
+        <button type="submit">Set Path</button>
+    </form>
 
     <!-- Upload Files Form -->
+    <br>
     <h3>Upload Files</h3>
     <form method="POST" enctype="multipart/form-data">
         {{ upload_form.hidden_tag() }}
@@ -27,6 +29,7 @@
         {{ upload_form.submit() }}
     </form>
 
+    <br>
     <h3>Download all items stored in the Home-Cloud</h3>
 
     <!-- Download All Button -->
@@ -34,6 +37,7 @@
         <button type="submit">Download All</button>
     </form>
 
+    <br>
     <h3>Current Directory: {{ current_path }}</h3>
 
     {% if current_path %}
@@ -61,7 +65,7 @@
                     <span class="file-name">{{ file }}</span>
                 
                 {% else %}
-                    <a href="{{ url_for('home', req_path=current_path + '/' + file) }}" download>📄 {{ file }}</a>
+                    <a class="file-name", href="{{ url_for('home', req_path=current_path + '/' + file) }}" download>📄 {{ file }}</a>
                 {% endif %}
             </div>
         {% endfor %}

@@ -13,7 +13,7 @@ A custom-made home cloud storage application build with Python and flask.
 
 ## To-do list
 - [x] Show current directory
-- [ ] Add the option to change the root where the cloud is reading.
+- [x] Add the option to change the root where the cloud is reading.
 - [ ] Add the option to download specific content.
   - [x] Option to download ALL content.
   - [ ] Make it so the download otion only applies for the files in the current directory.
@@ -21,6 +21,7 @@ A custom-made home cloud storage application build with Python and flask.
   - [x] Fix long-name fitting for files/folders.
   - [x] Add folder icon.
   - [x] Add thumbnails.
+  - [x] Add bootstrap.
   - [ ] Make it more stylish in general.
 - [x] Dockerize application.
 
